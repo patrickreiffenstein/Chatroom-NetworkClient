@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
+using Chatroom_Client.Packets.ClientPackets;
 
 namespace Chatroom_Client
 {
@@ -73,11 +74,12 @@ namespace Chatroom_Client
 			}
 		}
 
-		public void SendPacket(byte[] bytes)
+		public void SendPacket(ClientPacket packet)
 		{
 			NetworkStream stream = client.GetStream();
+			
 
-			stream.Write(bytes, 0, bytes.Length);
+			//stream.Write(bytes, 0, bytes.Length);
 		}
 	}
 }

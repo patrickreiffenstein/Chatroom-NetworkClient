@@ -6,16 +6,8 @@ using System.Threading.Tasks;
 
 namespace Chatroom_Client.Packets.ClientPackets
 {
-	public enum ClientPacketType : byte
+	public class ClientPacket
 	{
-		SendMesage = 2,
-		ChangeName = 4
-	}
-
-	public abstract class ClientPacket
-	{
-		public ClientPacketType clientPacket { get; protected set; }
-
-		public abstract byte[] Serialize();
+		public readonly byte[] bytes;
 	}
 }
