@@ -22,6 +22,7 @@ namespace Chatroom_Client
 			try
 			{
 				client = new TcpClient(server, port);
+				ClientLoop(client);
 			}
 			catch (Exception e)
 			{
@@ -30,6 +31,46 @@ namespace Chatroom_Client
 				return false;
 			}
 			return true;
+		}
+
+		public void ClientLoop(TcpClient client)
+		{
+			NetworkStream stream = client.GetStream();
+			ClientEvents events = new ClientEvents();
+
+			while (client.Connected)
+			{
+				List<byte> data = new List<byte>();
+				while (client.Available > 0)
+				{
+					data[data.Count] = (byte)stream.ReadByte();
+				}
+				byte[] dataArray = data.ToArray();
+				switch (data[0])
+				{
+					case 1:
+						// Klienten bliver pinget og vi ignorer det, tror jeg?
+						break;
+					case 3:
+						events.MessageReceived(data[1].ToString(), BitConverter.ToString(dataArray, dataArray[12], BitConverter.ToInt32(dataArray, 10)), BitConverter.ToInt64(dataArray, 2));
+						break;
+					case 5:
+						events.LogMessageReceived(BitConverter.ToString(dataArray, 11, BitConverter.ToInt32(dataArray, 9)), BitConverter.ToInt64(dataArray, 2));
+						break;
+					case 7:
+						events.UserInfoReceived(BitConverter.ToInt32(dataArray, 1), BitConverter.ToString(dataArray, 3, dataArray[2]));
+						break;
+					case 9:
+						events.UserIDReceived(BitConverter.ToInt32(dataArray, 1));
+						break;
+					case 11:
+						events.UserLeft(BitConverter.ToInt32(dataArray, 1));
+						break;
+					default:
+						// Det her ville ikke være ret godt siden vi ikke kan genkende pakken.
+						break;
+				}
+			}
 		}
 
 		public void SendPacket(byte[] bytes)
