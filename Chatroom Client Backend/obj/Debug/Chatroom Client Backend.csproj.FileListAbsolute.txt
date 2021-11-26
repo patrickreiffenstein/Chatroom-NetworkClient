@@ -1,0 +1,6 @@
+C:\Users\payth\source\repos\Chatroom Client\Chatroom Client Backend\bin\Debug\Chatroom Client Backend.dll
+C:\Users\payth\source\repos\Chatroom Client\Chatroom Client Backend\bin\Debug\Chatroom Client Backend.pdb
+C:\Users\payth\source\repos\Chatroom Client\Chatroom Client Backend\obj\Debug\Chatroom Client Backend.csprojAssemblyReference.cache
+C:\Users\payth\source\repos\Chatroom Client\Chatroom Client Backend\obj\Debug\Chatroom Client Backend.csproj.CoreCompileInputs.cache
+C:\Users\payth\source\repos\Chatroom Client\Chatroom Client Backend\obj\Debug\Chatroom Client Backend.dll
+C:\Users\payth\source\repos\Chatroom Client\Chatroom Client Backend\obj\Debug\Chatroom Client Backend.pdb

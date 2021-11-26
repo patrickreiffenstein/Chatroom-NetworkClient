@@ -4,25 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
-using Chatroom_Client.Packets.ClientPackets;
+using Chatroom_Client_Backend.Packets.ClientPackets;
 
-namespace Chatroom_Client
+namespace Chatroom_Client_Backend
 {
-	class NetworkClient
+	public class NetworkClient
 	{
 		TcpClient client;
+		string nickName;
 
-		/// <summary>
-		/// Method to try to connect to the server
-		/// </summary>
-		/// <returns>
-		/// Returns a bool about wheter or not the connection is succesful
-		/// </returns>
+		public NetworkClient(string Nickname)
+		{
+			nickName = Nickname;
+		}
+
 		public bool TryConnect(string server, int port)
 		{
 			try
 			{
-				client = new TcpClient(server, port);
+				client = new TcpClient();
+				client.Connect(server, port);
+
 				ClientLoop(client);
 			}
 			catch (Exception e)
@@ -46,7 +48,9 @@ namespace Chatroom_Client
 				{
 					data[data.Count] = (byte)stream.ReadByte();
 				}
+
 				byte[] dataArray = data.ToArray();
+				
 				switch (data[0])
 				{
 					case 1:
@@ -62,13 +66,14 @@ namespace Chatroom_Client
 						events.UserInfoReceived(BitConverter.ToInt32(dataArray, 1), BitConverter.ToString(dataArray, 3, dataArray[2]));
 						break;
 					case 9:
+						//Handshake
 						events.UserIDReceived(BitConverter.ToInt32(dataArray, 1));
+						SendPacket(new TellNamePacket(nickName));
 						break;
 					case 11:
 						events.UserLeft(BitConverter.ToInt32(dataArray, 1));
 						break;
 					default:
-						// Det her ville ikke være ret godt siden vi ikke kan genkende pakken.
 						break;
 				}
 			}

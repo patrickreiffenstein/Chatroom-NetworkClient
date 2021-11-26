@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chatroom Client", "Chatroom Client\Chatroom Client.csproj", "{CFA13443-D580-4F69-8D76-EC802C431360}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chatroom Client Backend", "Chatroom Client Backend\Chatroom Client Backend.csproj", "{77CC37E5-9074-444F-BE62-9480E7152D5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chatroom Client Backend Demo", "Chatroom Client Backend Demo\Chatroom Client Backend Demo.csproj", "{EC1BDE2B-73FB-4D5B-BBEC-62AB8E8357D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{CFA13443-D580-4F69-8D76-EC802C431360}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFA13443-D580-4F69-8D76-EC802C431360}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFA13443-D580-4F69-8D76-EC802C431360}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77CC37E5-9074-444F-BE62-9480E7152D5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77CC37E5-9074-444F-BE62-9480E7152D5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77CC37E5-9074-444F-BE62-9480E7152D5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77CC37E5-9074-444F-BE62-9480E7152D5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC1BDE2B-73FB-4D5B-BBEC-62AB8E8357D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC1BDE2B-73FB-4D5B-BBEC-62AB8E8357D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC1BDE2B-73FB-4D5B-BBEC-62AB8E8357D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC1BDE2B-73FB-4D5B-BBEC-62AB8E8357D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
