@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Chatroom_Client_Backend;
-using Chatroom_Client_Backend.Packets.ClientPackets;
+using Chatroom_Client_Backend.ClientPackets;
 
 namespace Chatroom_Client_Backend_Demo
 {
@@ -20,7 +20,7 @@ namespace Chatroom_Client_Backend_Demo
 			NetworkClient client = new NetworkClient(nickName);
 			bool connected = client.Connect("10.29.133.16", 25565);
 
-			client.onUserIDReceivedAction += onUserIDReceivedActionMethod;
+			client.onUserIDReceived += onUserIDReceivedActionMethod;
 			
 			Console.WriteLine(connected);
 			

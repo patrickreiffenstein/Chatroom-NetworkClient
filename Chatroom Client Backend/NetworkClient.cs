@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
-using Chatroom_Client_Backend.Packets.ClientPackets;
+using Chatroom_Client_Backend.ClientPackets;
 using System.Threading;
 
 namespace Chatroom_Client_Backend
@@ -14,25 +14,22 @@ namespace Chatroom_Client_Backend
 		TcpClient client;
 		string nickName;
 		NetworkStream stream;
-		public ClientEvents events;
 
-		//Events
-
+		///Events
 		//3
-		public event Action<(int user, string message, long timeStamp)> onMessageAction;
+		public event Action<(int user, string message, long timeStamp)> onMessage;
 		//5
-		public event Action<(string message, long timeStamp)> onLogMessageAction;
+		public event Action<(string message, long timeStamp)> onLogMessage;
 		//7
-		public event Action<(int userID, string name)> onUserInfoReceivedAction;
+		public event Action<(int userID, string name)> onUserInfoReceived;
 		//9
-		public event Action<int> onUserIDReceivedAction;
+		public event Action<int> onUserIDReceived;
 		//11
-		public event Action<int> onUserLeftAction;
+		public event Action<int> onUserLeft;
 
 		public NetworkClient(string Nickname)
 		{
 			nickName = Nickname;
-
 		}
 
 		public bool Connect(string server, int port)
@@ -46,7 +43,6 @@ namespace Chatroom_Client_Backend
 					client.EndConnect(ar);
 
 					stream = client.GetStream();
-					events = new ClientEvents();
 				}
 				catch (SocketException e)
 				{
@@ -59,10 +55,8 @@ namespace Chatroom_Client_Backend
 
 		public void Update()
 		{
-			//List<byte> data = new List<byte>();
 			while (client.Available > 0)
 			{
-				//data.Add((byte)stream.ReadByte());
 				bool privateMessage;
 				int userID;
 				byte[] unixTimeStampArray;
@@ -78,7 +72,7 @@ namespace Chatroom_Client_Backend
 				switch (stream.ReadByte())
 				{
 					case 1:
-						// Klienten bliver pinget og vi ignorer det, tror jeg?
+						// Klienten bliver pinget og vi ignorer det
 						break;
 					case 3:
 						privateMessage = stream.ReadByte() != 0;
@@ -97,7 +91,7 @@ namespace Chatroom_Client_Backend
 						stream.Read(messageArray, 0, messageLength);
 						message = BitConverter.ToString(messageArray, 0);
 
-						onMessageAction?.Invoke((userID, message, unixTimeStamp));
+						onMessage?.Invoke((userID, message, unixTimeStamp));
 						break;
 					case 5:
 						unixTimeStampArray = new byte[sizeof(long)];
@@ -112,7 +106,7 @@ namespace Chatroom_Client_Backend
 						stream.Read(messageArray, 0, messageLength);
 						message = BitConverter.ToString(messageArray, 0);
 
-						onLogMessageAction?.Invoke((message, unixTimeStamp));
+						onLogMessage?.Invoke((message, unixTimeStamp));
 						break;
 					case 7:
 						userID = stream.ReadByte();
@@ -123,51 +117,23 @@ namespace Chatroom_Client_Backend
 						stream.Read(nameArray, 0, nameLength);
 						name = BitConverter.ToString(nameArray, 0);
 
-						onUserInfoReceivedAction?.Invoke((userID, name));
+						onUserInfoReceived?.Invoke((userID, name));
 						break;
 					case 9:
 						//Handshake
 						userID = stream.ReadByte();
 
 						SendPacket(new TellNamePacket(nickName));
-						onUserIDReceivedAction?.Invoke(userID);
+						onUserIDReceived?.Invoke(userID);
 						break;
 					case 11:
 						userID = stream.ReadByte();
-						onUserLeftAction?.Invoke(userID);
+						onUserLeft?.Invoke(userID);
 						break;
 					default:
 						break;
 				}
 			}
-
-			/*byte[] dataArray = data.ToArray();
-
-			switch (data[0])
-			{
-				case 1:
-					// Klienten bliver pinget og vi ignorer det, tror jeg?
-					break;
-				case 3:
-					events.MessageReceived(dataArray[1], BitConverter.ToString(dataArray, dataArray[12], BitConverter.ToInt32(dataArray, 10)), BitConverter.ToInt64(dataArray, 2));
-					break;
-				case 5:
-					events.LogMessageReceived(BitConverter.ToString(dataArray, sizeof(byte) + sizeof(ushort) + sizeof(long), Convert.ToUInt16(dataArray[sizeof(byte) + sizeof(long)])), BitConverter.ToInt64(dataArray, 2));
-					break;
-				case 7:
-					events.UserInfoReceived(dataArray[1], BitConverter.ToString(dataArray, 3, dataArray[2]));
-					break;
-				case 9:
-					//Handshake
-					events.UserIDReceived(dataArray[1]);
-					SendPacket(new TellNamePacket(nickName));
-					break;
-				case 11:
-					events.UserLeft(BitConverter.ToInt32(dataArray, 1));
-					break;
-				default:
-					break;
-			}*/
 		}
 
 		public void SendPacket(ClientPacket packet)
@@ -175,6 +141,21 @@ namespace Chatroom_Client_Backend
 			NetworkStream stream = client.GetStream();
 			
 			stream.Write(packet.bytes, 0, packet.bytes.Length);
+		}
+
+		public void SendMessage(string message)
+		{
+			SendPacket(new SendMessagePacket(message));
+		}
+
+		public void TellName(string nickName)
+		{
+			SendPacket(new TellNamePacket(nickName));
+		}
+
+		public void Disconnect()
+		{
+			SendPacket(new DisconnectPacket());
 		}
 	}
 }

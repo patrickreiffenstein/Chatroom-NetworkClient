@@ -41,13 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientEvents.cs" />
     <Compile Include="NetworkClient.cs" />
-    <Compile Include="Packets\ClientPackets\ClientPacket.cs" />
-    <Compile Include="Packets\ClientPackets\DisconnectPacket.cs" />
-    <Compile Include="Packets\ClientPackets\SendMessagePacket.cs" />
-    <Compile Include="Packets\ClientPackets\TellNamePacket.cs" />
-    <Compile Include="Packets\ServerPackets\ServerPacket.cs" />
+    <Compile Include="ClientPackets\ClientPacket.cs" />
+    <Compile Include="ClientPackets\DisconnectPacket.cs" />
+    <Compile Include="ClientPackets\SendMessagePacket.cs" />
+    <Compile Include="ClientPackets\TellNamePacket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Chatroom_Client_Backend.Packets.ClientPackets
+namespace Chatroom_Client_Backend.ClientPackets
 {
 	public class ClientPacket
 	{
