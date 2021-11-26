@@ -11,6 +11,11 @@ namespace Chatroom_Client_Backend
 {
 	public class NetworkClient
 	{
+		//Variabler
+		private TcpClient client;
+		private string nickName;
+		private NetworkStream stream;
+
 		///Events
 		//3
 		public event Action<(int user, string message, DateTime timeStamp)> onMessage;
@@ -23,17 +28,25 @@ namespace Chatroom_Client_Backend
 		//11
 		public event Action<int> onUserLeft;
 
-		//Variables
-		TcpClient client;
-		string nickName;
-		NetworkStream stream;
-
-		public NetworkClient(string Nickname)
+		/// <summary>
+		/// NetworkClient er instansen som man laver når man vil starte sit backend modul, 
+		/// det er den som man bruger til at have en samtale kørende med serveren.
+		/// </summary>
+		/// <param name="Nickname">Ens eget navn</param>
+		/// <param name="server">IP til den server man vil tilkoble sig</param>
+		/// <param name="port">Porten til den server man vil tilkoble sig</param>
+		public NetworkClient(string Nickname, string server, int port)
 		{
 			nickName = Nickname;
+			Connect(server, port);
 		}
 
-		public void Connect(string server, int port)
+		/// <summary>
+		/// Connect bliver brugt til at man vælger hvilken server man vil connect sin
+		/// </summary>
+		/// <param name="server"></param>
+		/// <param name="port"></param>
+		private void Connect(string server, int port)
 		{
 			client = new TcpClient();
 
@@ -52,7 +65,7 @@ namespace Chatroom_Client_Backend
 			}), null);
 		}
 
-		enum Packets
+		private enum Packets
 		{
 			Ping = 1,
 			ReceiveMessage = 3,
@@ -62,6 +75,9 @@ namespace Chatroom_Client_Backend
 			UserLeft = 11
 		}
 
+		/// <summary>
+		/// Update er en metode som skal køres hver frame eller hvor ofte man ønsker at få opdateret information fra serveren
+		/// </summary>
 		public void Update()
 		{
 			while (client.Available > 0)
@@ -152,16 +168,27 @@ namespace Chatroom_Client_Backend
 			stream.Write(packet.bytes, 0, packet.bytes.Length);
 		}
 
+		/// <summary>
+		/// Metode til at sende beskeder i chatrummet
+		/// </summary>
+		/// <param name="message">Beskeden man ønsker at sende</param>
 		public void SendMessage(string message)
 		{
 			SendPacket(new SendMessagePacket(message));
 		}
 
+		/// <summary>
+		/// Metoden til at skifte sit navn
+		/// </summary>
+		/// <param name="nickName">Det navn man ønsker at skifte til</param>
 		public void ChangeName(string nickName)
 		{
 			SendPacket(new TellNamePacket(nickName));
 		}
 
+		/// <summary>
+		/// Metoden til at frakoble sig serveren
+		/// </summary>
 		public void Disconnect()
 		{
 			SendPacket(new DisconnectPacket());
