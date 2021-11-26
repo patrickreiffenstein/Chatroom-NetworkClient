@@ -99,6 +99,8 @@ namespace Chatroom_Client_Backend
 						messageArray = new byte[messageLength];
 						stream.Read(messageArray, 0, messageLength);
 						message = BitConverter.ToString(messageArray, 0);
+
+						events.LogMessageReceived(message, unixTimeStamp);
 						break;
 					case 7:
 						userID = stream.ReadByte();
@@ -109,15 +111,18 @@ namespace Chatroom_Client_Backend
 						stream.Read(nameArray, 0, nameLength);
 						name = BitConverter.ToString(nameArray, 0);
 
+						events.UserInfoReceived(userID, name);
 						break;
 					case 9:
 						//Handshake
 						userID = stream.ReadByte();
 
 						SendPacket(new TellNamePacket(nickName));
+						events.UserIDReceived(userID);
 						break;
 					case 11:
 						userID = stream.ReadByte();
+						events.UserLeft(userID);
 						break;
 					default:
 						break;
