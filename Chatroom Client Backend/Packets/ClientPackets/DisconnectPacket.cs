@@ -10,6 +10,8 @@ namespace Chatroom_Client_Backend.Packets.ClientPackets
 	{
 		public DisconnectPacket()
 		{
+			bytes = new byte[sizeof(byte)];
+
 			//PackageID
 			bytes[0] = (byte)2;
 		}

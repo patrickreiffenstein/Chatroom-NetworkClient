@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using Chatroom_Client_Backend.Packets.ClientPackets;
+using System.Threading;
 
 namespace Chatroom_Client_Backend
 {
@@ -12,6 +13,8 @@ namespace Chatroom_Client_Backend
 	{
 		TcpClient client;
 		string nickName;
+		NetworkStream stream;
+		ClientEvents events;
 
 		public NetworkClient(string Nickname)
 		{
@@ -20,63 +23,130 @@ namespace Chatroom_Client_Backend
 
 		public bool TryConnect(string server, int port)
 		{
-			try
-			{
-				client = new TcpClient();
-				client.Connect(server, port);
+			client = new TcpClient();
 
-				ClientLoop(client);
-			}
-			catch (Exception e)
+			client.BeginConnect(server, port, new AsyncCallback(delegate (IAsyncResult ar)
 			{
-				//Gør noget bedre med eventuelle fejl senere
-				Console.WriteLine(e);
-				return false;
-			}
+				try
+				{
+					client.EndConnect(ar);
+
+					stream = client.GetStream();
+					events = new ClientEvents();
+				}
+				catch (SocketException e)
+				{
+					throw e;
+				}
+			}), null);
+
+
 			return true;
 		}
 
-		public void ClientLoop(TcpClient client)
+		public void Update()
 		{
-			NetworkStream stream = client.GetStream();
-			ClientEvents events = new ClientEvents();
-
-			while (client.Connected)
+			//List<byte> data = new List<byte>();
+			while (client.Available > 0)
 			{
-				List<byte> data = new List<byte>();
-				while (client.Available > 0)
-				{
-					data[data.Count] = (byte)stream.ReadByte();
-				}
+				//data.Add((byte)stream.ReadByte());
+				int userID;
+				byte[] unixTimeStampArray;
+				byte[] messageLengthArray;
+				byte[] messageArray;
+				long unixTimeStamp;
+				ushort messageLength;
+				string message;
+				byte nameLength;
+				byte[] nameArray;
+				string name;
 
-				byte[] dataArray = data.ToArray();
-				
-				switch (data[0])
+				switch (stream.ReadByte())
 				{
 					case 1:
 						// Klienten bliver pinget og vi ignorer det, tror jeg?
 						break;
 					case 3:
-						events.MessageReceived(data[1].ToString(), BitConverter.ToString(dataArray, dataArray[12], BitConverter.ToInt32(dataArray, 10)), BitConverter.ToInt64(dataArray, 2));
+						userID = stream.ReadByte();
+
+						unixTimeStampArray = new byte[sizeof(long)];
+						stream.Read(unixTimeStampArray, 0, sizeof(long));
+						unixTimeStamp = BitConverter.ToInt64(unixTimeStampArray, 0);
+
+						messageLengthArray = new byte[sizeof(ushort)];
+						stream.Read(messageLengthArray, 0, sizeof(ushort));
+						messageLength  = BitConverter.ToUInt16(messageLengthArray, 0);
+
+						messageArray = new byte[messageLength];
+						stream.Read(messageArray, 0, messageLength);
+						message = BitConverter.ToString(messageArray, 0);
+
+						events.MessageReceived(userID, message, unixTimeStamp);
 						break;
 					case 5:
-						events.LogMessageReceived(BitConverter.ToString(dataArray, 11, BitConverter.ToInt32(dataArray, 9)), BitConverter.ToInt64(dataArray, 2));
+						unixTimeStampArray = new byte[sizeof(long)];
+						stream.Read(unixTimeStampArray, 0, sizeof(long));
+						unixTimeStamp = BitConverter.ToInt64(unixTimeStampArray, 0);
+
+						messageLengthArray = new byte[sizeof(ushort)];
+						stream.Read(messageLengthArray, 0, sizeof(ushort));
+						messageLength = BitConverter.ToUInt16(messageLengthArray, 0);
+
+						messageArray = new byte[messageLength];
+						stream.Read(messageArray, 0, messageLength);
+						message = BitConverter.ToString(messageArray, 0);
 						break;
 					case 7:
-						events.UserInfoReceived(BitConverter.ToInt32(dataArray, 1), BitConverter.ToString(dataArray, 3, dataArray[2]));
+						userID = stream.ReadByte();
+
+						nameLength = (byte)stream.ReadByte();
+
+						nameArray = new byte[nameLength];
+						stream.Read(nameArray, 0, nameLength);
+						name = BitConverter.ToString(nameArray, 0);
+
 						break;
 					case 9:
 						//Handshake
-						events.UserIDReceived(BitConverter.ToInt32(dataArray, 1));
+						userID = stream.ReadByte();
+
 						SendPacket(new TellNamePacket(nickName));
 						break;
 					case 11:
-						events.UserLeft(BitConverter.ToInt32(dataArray, 1));
+						userID = stream.ReadByte();
 						break;
 					default:
 						break;
 				}
 			}
+
+			/*byte[] dataArray = data.ToArray();
+
+			switch (data[0])
+			{
+				case 1:
+					// Klienten bliver pinget og vi ignorer det, tror jeg?
+					break;
+				case 3:
+					events.MessageReceived(dataArray[1], BitConverter.ToString(dataArray, dataArray[12], BitConverter.ToInt32(dataArray, 10)), BitConverter.ToInt64(dataArray, 2));
+					break;
+				case 5:
+					events.LogMessageReceived(BitConverter.ToString(dataArray, sizeof(byte) + sizeof(ushort) + sizeof(long), Convert.ToUInt16(dataArray[sizeof(byte) + sizeof(long)])), BitConverter.ToInt64(dataArray, 2));
+					break;
+				case 7:
+					events.UserInfoReceived(dataArray[1], BitConverter.ToString(dataArray, 3, dataArray[2]));
+					break;
+				case 9:
+					//Handshake
+					events.UserIDReceived(dataArray[1]);
+					SendPacket(new TellNamePacket(nickName));
+					break;
+				case 11:
+					events.UserLeft(BitConverter.ToInt32(dataArray, 1));
+					break;
+				default:
+					break;
+			}*/
 		}
 
 		public void SendPacket(ClientPacket packet)

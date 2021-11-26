@@ -8,6 +8,6 @@ namespace Chatroom_Client_Backend.Packets.ClientPackets
 {
 	public class ClientPacket
 	{
-		public readonly byte[] bytes;
+		public byte[] bytes;
 	}
 }

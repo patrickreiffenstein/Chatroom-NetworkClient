@@ -16,12 +16,15 @@ namespace Chatroom_Client_Backend_Demo
 			string nickName = "Kresten";
 			// Starter klienten
 			NetworkClient client = new NetworkClient(nickName);
-			bool connected = client.TryConnect("10.29.139.215", 25565);
+			bool connected = client.TryConnect("10.29.133.16", 25565);
 
 			Console.WriteLine(connected);
 			
 			while (running)
 			{
+				System.Threading.Thread.Sleep(20);
+				client.Update();
+
 				string input = Console.ReadLine();
 				
 				switch (input)

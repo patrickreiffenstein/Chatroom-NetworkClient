@@ -10,6 +10,8 @@ namespace Chatroom_Client_Backend.Packets.ClientPackets
 	{
 		public SendMessagePacket(string message)
 		{
+			bytes = new byte[sizeof(byte) + sizeof(byte) + sizeof(ushort) + message.Length];
+
 			//PackageID
 			bytes[0] = (byte)2;
 
@@ -17,17 +19,19 @@ namespace Chatroom_Client_Backend.Packets.ClientPackets
 			bytes[1] = (byte)0;
 
 			//MessageLength
-			byte[] messageLengthBytes = BitConverter.GetBytes((ushort)message.Length);
+			byte[] messageLengthBytes = BitConverter.GetBytes((ushort)Encoding.UTF8.GetByteCount(message));
 
 			for (int i = 0; i < messageLengthBytes.Length; i++)
 			{
 				bytes[2 + i] = messageLengthBytes[i];
 			}
-			
+
 			//Message
+			byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+
 			for (int i = 0; i < message.Length; i++)
 			{
-				bytes[3 + i] = Convert.ToByte(message[i]);
+				bytes[4 + i] = messageBytes[i];
 			}
 		}
 	}

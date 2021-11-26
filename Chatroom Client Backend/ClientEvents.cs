@@ -9,7 +9,7 @@ namespace Chatroom_Client_Backend
 	class ClientEvents
 	{
 		//3
-		public event Action<(string user, string message, long timeStamp)> onMessageAction;
+		public event Action<(int user, string message, long timeStamp)> onMessageAction;
 		//5
 		public event Action<(string message, long timeStamp)> onLogMessageAction;
 		//7
@@ -20,7 +20,7 @@ namespace Chatroom_Client_Backend
 		public event Action<int> onUserLeftAction;
 
 		//3
-		public void MessageReceived(string user, string message, long timeStamp)
+		public void MessageReceived(int user, string message, long timeStamp)
 		{
 			onMessageAction?.Invoke((user, message, timeStamp));
 		}
