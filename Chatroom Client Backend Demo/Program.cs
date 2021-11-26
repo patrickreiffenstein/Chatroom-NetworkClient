@@ -40,7 +40,7 @@ namespace Chatroom_Client_Backend_Demo
 						client.SendPacket(new TellNamePacket(nickName));
 						break;
 					case "10":
-						client.SendPacket(new DisconnectPacket(clientID));
+						client.SendPacket(new DisconnectPacket());
 						break;
 					case "start":
 						Main(new string[0]);
