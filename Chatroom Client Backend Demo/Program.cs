@@ -18,9 +18,9 @@ namespace Chatroom_Client_Backend_Demo
 			string nickName = "Kresten";
 			// Starter klienten
 			NetworkClient client = new NetworkClient(nickName);
-			bool connected = client.TryConnect("10.29.133.16", 25565);
+			bool connected = client.Connect("10.29.133.16", 25565);
 
-			client.events.onUserIDReceivedAction += onUserIDReceivedActionMethod;
+			client.onUserIDReceivedAction += onUserIDReceivedActionMethod;
 			
 			Console.WriteLine(connected);
 			

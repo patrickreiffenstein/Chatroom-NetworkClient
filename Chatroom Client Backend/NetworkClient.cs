@@ -16,13 +16,26 @@ namespace Chatroom_Client_Backend
 		NetworkStream stream;
 		public ClientEvents events;
 
+		//Events
+
+		//3
+		public event Action<(int user, string message, long timeStamp)> onMessageAction;
+		//5
+		public event Action<(string message, long timeStamp)> onLogMessageAction;
+		//7
+		public event Action<(int userID, string name)> onUserInfoReceivedAction;
+		//9
+		public event Action<int> onUserIDReceivedAction;
+		//11
+		public event Action<int> onUserLeftAction;
+
 		public NetworkClient(string Nickname)
 		{
 			nickName = Nickname;
 
 		}
 
-		public bool TryConnect(string server, int port)
+		public bool Connect(string server, int port)
 		{
 			client = new TcpClient();
 
@@ -40,7 +53,6 @@ namespace Chatroom_Client_Backend
 					throw e;
 				}
 			}), null);
-
 
 			return true;
 		}
@@ -85,7 +97,7 @@ namespace Chatroom_Client_Backend
 						stream.Read(messageArray, 0, messageLength);
 						message = BitConverter.ToString(messageArray, 0);
 
-						events.MessageReceived(userID, message, unixTimeStamp);
+						onMessageAction?.Invoke((userID, message, unixTimeStamp));
 						break;
 					case 5:
 						unixTimeStampArray = new byte[sizeof(long)];
@@ -100,7 +112,7 @@ namespace Chatroom_Client_Backend
 						stream.Read(messageArray, 0, messageLength);
 						message = BitConverter.ToString(messageArray, 0);
 
-						events.LogMessageReceived(message, unixTimeStamp);
+						onLogMessageAction?.Invoke((message, unixTimeStamp));
 						break;
 					case 7:
 						userID = stream.ReadByte();
@@ -111,18 +123,18 @@ namespace Chatroom_Client_Backend
 						stream.Read(nameArray, 0, nameLength);
 						name = BitConverter.ToString(nameArray, 0);
 
-						events.UserInfoReceived(userID, name);
+						onUserInfoReceivedAction?.Invoke((userID, name));
 						break;
 					case 9:
 						//Handshake
 						userID = stream.ReadByte();
 
 						SendPacket(new TellNamePacket(nickName));
-						events.UserIDReceived(userID);
+						onUserIDReceivedAction?.Invoke(userID);
 						break;
 					case 11:
 						userID = stream.ReadByte();
-						events.UserLeft(userID);
+						onUserLeftAction?.Invoke(userID);
 						break;
 					default:
 						break;
