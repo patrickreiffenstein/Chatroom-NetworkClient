@@ -50,6 +50,7 @@ namespace Chatroom_Client_Backend
 			while (client.Available > 0)
 			{
 				//data.Add((byte)stream.ReadByte());
+				bool privateMessage;
 				int userID;
 				byte[] unixTimeStampArray;
 				byte[] messageLengthArray;
@@ -67,6 +68,8 @@ namespace Chatroom_Client_Backend
 						// Klienten bliver pinget og vi ignorer det, tror jeg?
 						break;
 					case 3:
+						privateMessage = stream.ReadByte() != 0;
+
 						userID = stream.ReadByte();
 
 						unixTimeStampArray = new byte[sizeof(long)];
