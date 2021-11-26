@@ -20,8 +20,7 @@ namespace Chatroom_Client_Backend_Demo
 			NetworkClient client = new NetworkClient(nickName);
 			bool connected = client.TryConnect("10.29.133.16", 25565);
 
-			ClientEvents events = new ClientEvents();
-			events.onUserIDReceivedAction += onUserIDReceivedActionMethod;
+			client.events.onUserIDReceivedAction += onUserIDReceivedActionMethod;
 			
 			Console.WriteLine(connected);
 			

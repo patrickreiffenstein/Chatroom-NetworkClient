@@ -14,11 +14,12 @@ namespace Chatroom_Client_Backend
 		TcpClient client;
 		string nickName;
 		NetworkStream stream;
-		ClientEvents events;
+		public ClientEvents events;
 
 		public NetworkClient(string Nickname)
 		{
 			nickName = Nickname;
+
 		}
 
 		public bool TryConnect(string server, int port)
