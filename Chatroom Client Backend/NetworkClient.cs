@@ -17,9 +17,9 @@ namespace Chatroom_Client_Backend
 
 		///Events
 		//3
-		public event Action<(int user, string message, long timeStamp)> onMessage;
+		public event Action<(int user, string message, DateTime timeStamp)> onMessage;
 		//5
-		public event Action<(string message, long timeStamp)> onLogMessage;
+		public event Action<(string message, DateTime timeStamp)> onLogMessage;
 		//7
 		public event Action<(int userID, string name)> onUserInfoReceived;
 		//9
@@ -32,7 +32,7 @@ namespace Chatroom_Client_Backend
 			nickName = Nickname;
 		}
 
-		public bool Connect(string server, int port)
+		public void Connect(string server, int port)
 		{
 			client = new TcpClient();
 
@@ -49,8 +49,6 @@ namespace Chatroom_Client_Backend
 					throw e;
 				}
 			}), null);
-
-			return true;
 		}
 
 		public void Update()
@@ -62,7 +60,7 @@ namespace Chatroom_Client_Backend
 				byte[] unixTimeStampArray;
 				byte[] messageLengthArray;
 				byte[] messageArray;
-				long unixTimeStamp;
+				DateTime unixTimeStamp;
 				ushort messageLength;
 				string message;
 				byte nameLength;
@@ -81,7 +79,7 @@ namespace Chatroom_Client_Backend
 
 						unixTimeStampArray = new byte[sizeof(long)];
 						stream.Read(unixTimeStampArray, 0, sizeof(long));
-						unixTimeStamp = BitConverter.ToInt64(unixTimeStampArray, 0);
+						unixTimeStamp = DateTime.FromBinary(BitConverter.ToInt64(unixTimeStampArray, 0)).ToLocalTime();
 
 						messageLengthArray = new byte[sizeof(ushort)];
 						stream.Read(messageLengthArray, 0, sizeof(ushort));
@@ -96,7 +94,7 @@ namespace Chatroom_Client_Backend
 					case 5:
 						unixTimeStampArray = new byte[sizeof(long)];
 						stream.Read(unixTimeStampArray, 0, sizeof(long));
-						unixTimeStamp = BitConverter.ToInt64(unixTimeStampArray, 0);
+						unixTimeStamp = DateTime.FromBinary(BitConverter.ToInt64(unixTimeStampArray, 0)).ToLocalTime();
 
 						messageLengthArray = new byte[sizeof(ushort)];
 						stream.Read(messageLengthArray, 0, sizeof(ushort));
@@ -136,7 +134,7 @@ namespace Chatroom_Client_Backend
 			}
 		}
 
-		public void SendPacket(ClientPacket packet)
+		private void SendPacket(ClientPacket packet)
 		{
 			NetworkStream stream = client.GetStream();
 			
@@ -148,7 +146,7 @@ namespace Chatroom_Client_Backend
 			SendPacket(new SendMessagePacket(message));
 		}
 
-		public void TellName(string nickName)
+		public void ChangeName(string nickName)
 		{
 			SendPacket(new TellNamePacket(nickName));
 		}
