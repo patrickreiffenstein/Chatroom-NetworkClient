@@ -10,6 +10,8 @@ namespace Chatroom_Client_Backend_Demo
 {
 	class Program
 	{
+		public static int clientID;
+
 		static void Main(string[] args)
 		{
 			bool running = true;
@@ -18,11 +20,13 @@ namespace Chatroom_Client_Backend_Demo
 			NetworkClient client = new NetworkClient(nickName);
 			bool connected = client.TryConnect("10.29.133.16", 25565);
 
+			ClientEvents events = new ClientEvents();
+			events.onUserIDReceivedAction += onUserIDReceivedActionMethod;
+			
 			Console.WriteLine(connected);
 			
 			while (running)
 			{
-				System.Threading.Thread.Sleep(20);
 				client.Update();
 
 				string input = Console.ReadLine();
@@ -36,12 +40,20 @@ namespace Chatroom_Client_Backend_Demo
 						client.SendPacket(new TellNamePacket(nickName));
 						break;
 					case "10":
-						client.SendPacket(new DisconnectPacket());
+						client.SendPacket(new DisconnectPacket(clientID));
+						break;
+					case "start":
+						Main(new string[0]);
 						break;
 					default:
 						break;
 				}
 			}
+		}
+
+		private static void onUserIDReceivedActionMethod(int id)
+		{
+			clientID = id;
 		}
 	}
 }

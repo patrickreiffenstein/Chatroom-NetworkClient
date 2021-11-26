@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Chatroom_Client_Backend
 {
-	class ClientEvents
+	public class ClientEvents
 	{
 		//3
 		public event Action<(int user, string message, long timeStamp)> onMessageAction;
@@ -41,7 +41,6 @@ namespace Chatroom_Client_Backend
 		public void UserIDReceived(int ID)
 		{
 			onUserIDReceivedAction?.Invoke(ID);
-
 		}
 
 		//11

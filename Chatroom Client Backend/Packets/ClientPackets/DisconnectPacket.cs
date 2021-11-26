@@ -8,12 +8,14 @@ namespace Chatroom_Client_Backend.Packets.ClientPackets
 {
 	public class DisconnectPacket : ClientPacket
 	{
-		public DisconnectPacket()
+		public DisconnectPacket(int id)
 		{
-			bytes = new byte[sizeof(byte)];
+			bytes = new byte[sizeof(byte) + sizeof(byte)];
 
 			//PackageID
 			bytes[0] = (byte)2;
+
+			bytes[1] = (byte)id;
 		}
 	}
 }
