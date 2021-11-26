@@ -11,10 +11,6 @@ namespace Chatroom_Client_Backend
 {
 	public class NetworkClient
 	{
-		TcpClient client;
-		string nickName;
-		NetworkStream stream;
-
 		///Events
 		//3
 		public event Action<(int user, string message, DateTime timeStamp)> onMessage;
@@ -26,6 +22,11 @@ namespace Chatroom_Client_Backend
 		public event Action<int> onUserIDReceived;
 		//11
 		public event Action<int> onUserLeft;
+
+		//Variables
+		TcpClient client;
+		string nickName;
+		NetworkStream stream;
 
 		public NetworkClient(string Nickname)
 		{
@@ -51,6 +52,16 @@ namespace Chatroom_Client_Backend
 			}), null);
 		}
 
+		enum Packets
+		{
+			Ping = 1,
+			ReceiveMessage = 3,
+			LogMessage = 5,
+			SendUserInfo = 7,
+			SendUserID = 9,
+			UserLeft = 11
+		}
+
 		public void Update()
 		{
 			while (client.Available > 0)
@@ -69,10 +80,10 @@ namespace Chatroom_Client_Backend
 
 				switch (stream.ReadByte())
 				{
-					case 1:
-						// Klienten bliver pinget og vi ignorer det
+					case (byte)Packets.Ping:
+						//Klienten bliver pinget og vi ignorer det
 						break;
-					case 3:
+					case (byte)Packets.ReceiveMessage:
 						privateMessage = stream.ReadByte() != 0;
 
 						userID = stream.ReadByte();
@@ -91,7 +102,7 @@ namespace Chatroom_Client_Backend
 
 						onMessage?.Invoke((userID, message, unixTimeStamp));
 						break;
-					case 5:
+					case (byte)Packets.LogMessage:
 						unixTimeStampArray = new byte[sizeof(long)];
 						stream.Read(unixTimeStampArray, 0, sizeof(long));
 						unixTimeStamp = DateTime.FromBinary(BitConverter.ToInt64(unixTimeStampArray, 0)).ToLocalTime();
@@ -106,7 +117,7 @@ namespace Chatroom_Client_Backend
 
 						onLogMessage?.Invoke((message, unixTimeStamp));
 						break;
-					case 7:
+					case (byte)Packets.SendUserInfo:
 						userID = stream.ReadByte();
 
 						nameLength = (byte)stream.ReadByte();
@@ -117,14 +128,14 @@ namespace Chatroom_Client_Backend
 
 						onUserInfoReceived?.Invoke((userID, name));
 						break;
-					case 9:
+					case (byte)Packets.SendUserID:
 						//Handshake
 						userID = stream.ReadByte();
 
 						SendPacket(new TellNamePacket(nickName));
 						onUserIDReceived?.Invoke(userID);
 						break;
-					case 11:
+					case (byte)Packets.UserLeft:
 						userID = stream.ReadByte();
 						onUserLeft?.Invoke(userID);
 						break;
