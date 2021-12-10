@@ -60,7 +60,7 @@ namespace Chatroom_Client_Backend
 				}
 				catch (SocketException e)
 				{
-					throw e;
+					
 				}
 			}), null);
 		}
