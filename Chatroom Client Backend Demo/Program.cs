@@ -17,7 +17,7 @@ namespace Chatroom_Client_Backend_Demo
 			bool running = true;
 			string nickName = "Kresten";
 			// Starter klienten
-			NetworkClient client = new NetworkClient(nickName, "192.168.43.217", 25564);
+			NetworkClient client = new NetworkClient(nickName, "10.29.133.16", 25565);
 
 			client.onUserIDReceived += onUserIDReceivedActionMethod;
 			
@@ -29,7 +29,7 @@ namespace Chatroom_Client_Backend_Demo
 				string input = Console.ReadLine();
 				
 				//Gammelt
-				switch (input)
+				/*switch (input)
 				{
 					case "2":
 						//client.SendPacket(new SendMessagePacket("Hej kresten!"));
@@ -38,14 +38,14 @@ namespace Chatroom_Client_Backend_Demo
 						//client.SendPacket(new TellNamePacket(nickName));
 						break;
 					case "10":
-						client.Disconnect();
+						//client.SendPacket(new DisconnectPacket());
 						break;
 					case "start":
 						Main(new string[0]);
 						break;
 					default:
 						break;
-				}
+				}*/
 			}
 		}
 
