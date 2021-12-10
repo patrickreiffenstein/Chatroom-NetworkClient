@@ -15,6 +15,7 @@ namespace Chatroom_Client_Backend
 		private TcpClient client;
 		private string nickName;
 		private NetworkStream stream;
+		public bool isConnected = false;
 
 		///Events
 		//3
@@ -57,11 +58,13 @@ namespace Chatroom_Client_Backend
 					client.EndConnect(ar);
 
 					stream = client.GetStream();
+					isConnected = true;
 				}
 				catch (SocketException)
 				{
-					
+					isConnected = false;
 				}
+				
 			}), null);
 		}
 
