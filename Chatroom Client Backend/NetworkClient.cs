@@ -58,7 +58,7 @@ namespace Chatroom_Client_Backend
 
 					stream = client.GetStream();
 				}
-				catch (SocketException e)
+				catch (SocketException)
 				{
 					
 				}
