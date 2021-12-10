@@ -119,7 +119,7 @@ namespace Chatroom_Client_Backend
 
 						messageArray = new byte[messageLength];
 						stream.Read(messageArray, 0, messageLength);
-						message = BitConverter.ToString(messageArray, 0);
+						message = Encoding.ASCII.GetString(messageArray);
 
 						onMessage?.Invoke((userID, message, unixTimeStamp));
 						break;
@@ -134,7 +134,7 @@ namespace Chatroom_Client_Backend
 
 						messageArray = new byte[messageLength];
 						stream.Read(messageArray, 0, messageLength);
-						message = BitConverter.ToString(messageArray, 0);
+						message = Encoding.ASCII.GetString(messageArray);
 
 						onLogMessage?.Invoke((message, unixTimeStamp));
 						break;
@@ -145,7 +145,7 @@ namespace Chatroom_Client_Backend
 
 						nameArray = new byte[nameLength];
 						stream.Read(nameArray, 0, nameLength);
-						name = BitConverter.ToString(nameArray, 0);
+						name = Encoding.ASCII.GetString(nameArray);
 
 						onUserInfoReceived?.Invoke((userID, name));
 						break;
