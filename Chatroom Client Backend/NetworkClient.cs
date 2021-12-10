@@ -94,6 +94,11 @@ namespace Chatroom_Client_Backend
 				byte[] nameArray;
 				string name;
 
+                if (stream is null)
+                {
+					return;
+                }
+
 				switch (stream.ReadByte())
 				{
 					case (byte)Packets.Ping:
