@@ -10,7 +10,7 @@ namespace Chatroom_Client_Backend.ClientPackets
 	{
 		public SendMessagePacket(string message)
 		{
-			bytes = new byte[sizeof(byte) + sizeof(byte) + sizeof(ushort) + message.Length];
+			bytes = new byte[sizeof(byte) + sizeof(byte) + sizeof(ushort) + Encoding.UTF8.GetByteCount(message)];
 
 			//PackageID
 			bytes[0] = (byte)2;
@@ -29,7 +29,7 @@ namespace Chatroom_Client_Backend.ClientPackets
 			//Message
 			byte[] messageBytes = Encoding.UTF8.GetBytes(message);
 
-			for (int i = 0; i < message.Length; i++)
+			for (int i = 0; i < messageBytes.Length; i++)
 			{
 				bytes[4 + i] = messageBytes[i];
 			}

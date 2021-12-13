@@ -114,7 +114,9 @@ namespace Chatroom_Client_Backend
 
 						unixTimeStampArray = new byte[sizeof(long)];
 						stream.Read(unixTimeStampArray, 0, sizeof(long));
-						unixTimeStamp = DateTime.FromBinary(BitConverter.ToInt64(unixTimeStampArray, 0)).ToLocalTime();
+
+						DateTimeOffset unixTime = DateTimeOffset.FromUnixTimeSeconds(BitConverter.ToInt64(unixTimeStampArray, 0) / 1000);
+						unixTimeStamp = unixTime.ToLocalTime().DateTime;
 
 						messageLengthArray = new byte[sizeof(ushort)];
 						stream.Read(messageLengthArray, 0, sizeof(ushort));
@@ -122,14 +124,16 @@ namespace Chatroom_Client_Backend
 
 						messageArray = new byte[messageLength];
 						stream.Read(messageArray, 0, messageLength);
-						message = Encoding.ASCII.GetString(messageArray);
+						message = Encoding.UTF8.GetString(messageArray);
 
 						onMessage?.Invoke((userID, message, unixTimeStamp));
 						break;
 					case (byte)Packets.LogMessage:
 						unixTimeStampArray = new byte[sizeof(long)];
 						stream.Read(unixTimeStampArray, 0, sizeof(long));
-						unixTimeStamp = DateTime.FromBinary(BitConverter.ToInt64(unixTimeStampArray, 0)).ToLocalTime();
+
+						DateTimeOffset unixTime2 = DateTimeOffset.FromUnixTimeSeconds(BitConverter.ToInt64(unixTimeStampArray, 0) / 1000);
+						unixTimeStamp = unixTime2.ToLocalTime().DateTime;
 
 						messageLengthArray = new byte[sizeof(ushort)];
 						stream.Read(messageLengthArray, 0, sizeof(ushort));
@@ -137,7 +141,7 @@ namespace Chatroom_Client_Backend
 
 						messageArray = new byte[messageLength];
 						stream.Read(messageArray, 0, messageLength);
-						message = Encoding.ASCII.GetString(messageArray);
+						message = Encoding.UTF8.GetString(messageArray);
 
 						onLogMessage?.Invoke((message, unixTimeStamp));
 						break;
@@ -148,7 +152,7 @@ namespace Chatroom_Client_Backend
 
 						nameArray = new byte[nameLength];
 						stream.Read(nameArray, 0, nameLength);
-						name = Encoding.ASCII.GetString(nameArray);
+						name = Encoding.UTF8.GetString(nameArray);
 
 						onUserInfoReceived?.Invoke((userID, name));
 						break;
@@ -171,9 +175,15 @@ namespace Chatroom_Client_Backend
 
 		private void SendPacket(ClientPacket packet)
 		{
-			NetworkStream stream = client.GetStream();
-			
-			stream.Write(packet.bytes, 0, packet.bytes.Length);
+            try
+            {
+				NetworkStream stream = client.GetStream();
+				stream.Write(packet.bytes, 0, packet.bytes.Length);
+			}
+			catch (Exception)
+            {
+				return;
+            }	
 		}
 
 		/// <summary>
