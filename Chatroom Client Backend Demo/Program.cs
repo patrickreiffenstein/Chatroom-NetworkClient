@@ -10,17 +10,15 @@ namespace Chatroom_Client_Backend_Demo
 {
 	class Program
 	{
-		public static int clientID;
-
 		static void Main(string[] args)
 		{
 			bool running = true;
 			string nickName = "Kresten";
+
 			// Starter klienten
 			NetworkClient client = new NetworkClient(nickName, "127.0.0.1", 25565);
 
-			client.onUserIDReceived += onUserIDReceivedActionMethod;
-			
+			client.Connect();
 			while (running)
 			{
 				client.Update();
@@ -48,9 +46,9 @@ namespace Chatroom_Client_Backend_Demo
 			}
 		}
 
-		private static void onUserIDReceivedActionMethod(int id)
+		private static void Client_onConnect(int obj)
 		{
-			clientID = id;
+			throw new NotImplementedException();
 		}
 	}
 }

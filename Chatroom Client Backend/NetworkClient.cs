@@ -12,10 +12,14 @@ namespace Chatroom_Client_Backend
 	public class NetworkClient
 	{
 		//Variabler
+		public int ClientID;
+
 		private TcpClient client;
 		private string nickName;
 		private NetworkStream stream;
-		public bool isConnected = false;
+		private string server;
+		private int port;
+
 
 		///Events
 		//3
@@ -24,10 +28,16 @@ namespace Chatroom_Client_Backend
 		public event Action<(string message, DateTime timeStamp)> onLogMessage;
 		//7
 		public event Action<(int userID, string name)> onUserInfoReceived;
-		//9
-		public event Action<int> onUserIDReceived;
+
+		/// <summary>
+		/// Returnere en boolks værdi alt efter om den er lykkedes (true) eller fejlet (false), i at tilkoble sig til serveren
+		/// </summary>
+		public event Action<bool> onConnect;
 		//11
 		public event Action<int> onUserLeft;
+
+		public event Action onDisconnect;
+
 
 		/// <summary>
 		/// NetworkClient er instansen som man laver når man vil starte sit backend modul, 
@@ -36,10 +46,11 @@ namespace Chatroom_Client_Backend
 		/// <param name="Nickname">Ens eget navn</param>
 		/// <param name="server">IP til den server man vil tilkoble sig</param>
 		/// <param name="port">Porten til den server man vil tilkoble sig</param>
-		public NetworkClient(string Nickname, string server, int port)
+		public NetworkClient(string Nickname, string Server, int Port)
 		{
 			nickName = Nickname;
-			Connect(server, port);
+			server = Server;
+			port = Port;
 		}
 
 		/// <summary>
@@ -47,7 +58,7 @@ namespace Chatroom_Client_Backend
 		/// </summary>
 		/// <param name="server"></param>
 		/// <param name="port"></param>
-		private void Connect(string server, int port)
+		public void Connect()
 		{
 			client = new TcpClient();
 
@@ -58,23 +69,25 @@ namespace Chatroom_Client_Backend
 					client.EndConnect(ar);
 
 					stream = client.GetStream();
-					isConnected = true;
 				}
 				catch (SocketException)
 				{
-					isConnected = false;
+					onConnect(false);
 				}
 				
 			}), null);
 		}
 
-		private enum Packets
+		public enum Packets
 		{
 			Ping = 1,
+			SendMessage = 2,
 			ReceiveMessage = 3,
+			TellName = 4,
 			LogMessage = 5,
 			SendUserInfo = 7,
 			SendUserID = 9,
+			Disconnect = 10,
 			UserLeft = 11
 		}
 
@@ -158,32 +171,27 @@ namespace Chatroom_Client_Backend
 						break;
 					case (byte)Packets.SendUserID:
 						//Handshake
-						userID = stream.ReadByte();
+						ClientID = stream.ReadByte();
 
 						SendPacket(new TellNamePacket(nickName));
-						onUserIDReceived?.Invoke(userID);
+						onConnect?.Invoke(true);
 						break;
 					case (byte)Packets.UserLeft:
 						userID = stream.ReadByte();
+
+						//Hvis det nu skulle ske
+						if (userID == ClientID)
+						{
+							onDisconnect?.Invoke();
+							break;
+						}
+
 						onUserLeft?.Invoke(userID);
 						break;
 					default:
 						break;
 				}
 			}
-		}
-
-		private void SendPacket(ClientPacket packet)
-		{
-            try
-            {
-				NetworkStream stream = client.GetStream();
-				stream.Write(packet.bytes, 0, packet.bytes.Length);
-			}
-			catch (Exception)
-            {
-				return;
-            }	
 		}
 
 		/// <summary>
@@ -210,6 +218,24 @@ namespace Chatroom_Client_Backend
 		public void Disconnect()
 		{
 			SendPacket(new DisconnectPacket());
+		}
+
+		public void PingServer()
+		{
+			SendPacket(new PingServerPacket());
+		}
+
+		private void SendPacket(ClientPacket packet)
+		{
+            try
+            {
+				NetworkStream stream = client.GetStream();
+				stream.Write(packet.bytes, 0, packet.bytes.Length);
+			}
+			catch (Exception)
+            {
+				onDisconnect?.Invoke();
+            }	
 		}
 	}
 }

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
+using static Chatroom_Client_Backend.NetworkClient;
 
 namespace Chatroom_Client_Backend.ClientPackets
 {
@@ -13,7 +10,7 @@ namespace Chatroom_Client_Backend.ClientPackets
 			bytes = new byte[sizeof(byte) + sizeof(byte) + Encoding.UTF8.GetByteCount(nickName)];
 
 			//PackageID
-			bytes[0] = (byte)4;
+			bytes[0] = (byte)Packets.TellName;
 
 			//MessageLength
 			bytes[1] = (byte)Encoding.UTF8.GetByteCount(nickName);

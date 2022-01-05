@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using static Chatroom_Client_Backend.NetworkClient;
 
 namespace Chatroom_Client_Backend.ClientPackets
 {
@@ -13,7 +11,7 @@ namespace Chatroom_Client_Backend.ClientPackets
 			bytes = new byte[sizeof(byte) + sizeof(byte) + sizeof(ushort) + Encoding.UTF8.GetByteCount(message)];
 
 			//PackageID
-			bytes[0] = (byte)2;
+			bytes[0] = (byte)Packets.SendMessage;
 
 			//UserID
 			bytes[1] = (byte)0;

@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientPackets\PingServerPacket.cs" />
     <Compile Include="NetworkClient.cs" />
     <Compile Include="ClientPackets\ClientPacket.cs" />
     <Compile Include="ClientPackets\DisconnectPacket.cs" />

@@ -2,14 +2,14 @@
 
 namespace Chatroom_Client_Backend.ClientPackets
 {
-	public class DisconnectPacket : ClientPacket
+	public class PingServerPacket : ClientPacket
 	{
-		public DisconnectPacket()
+		public PingServerPacket()
 		{
 			bytes = new byte[sizeof(byte) + sizeof(byte)];
 
 			//PackageID
-			bytes[0] = (byte)Packets.Disconnect;
+			bytes[0] = (byte)Packets.Ping;
 		}
 	}
 }
