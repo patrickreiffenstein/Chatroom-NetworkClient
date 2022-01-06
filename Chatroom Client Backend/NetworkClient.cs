@@ -96,6 +96,11 @@ namespace Chatroom_Client_Backend
 		/// </summary>
 		public void Update()
 		{
+			if (client == null)
+			{
+				return;
+			}
+
 			while (client.Available > 0)
 			{
 				bool privateMessage;
