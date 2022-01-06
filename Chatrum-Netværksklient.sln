@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chatroom Client Backend", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chatroom Client Backend Demo", "Chatroom Client Backend Demo\Chatroom Client Backend Demo.csproj", "{EC1BDE2B-73FB-4D5B-BBEC-62AB8E8357D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chatroom Bulk Tester", "Chatroom Bulk Tester\Chatroom Bulk Tester.csproj", "{FB3EA722-F83B-4644-8A3A-8C997B584693}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{EC1BDE2B-73FB-4D5B-BBEC-62AB8E8357D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC1BDE2B-73FB-4D5B-BBEC-62AB8E8357D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC1BDE2B-73FB-4D5B-BBEC-62AB8E8357D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB3EA722-F83B-4644-8A3A-8C997B584693}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB3EA722-F83B-4644-8A3A-8C997B584693}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB3EA722-F83B-4644-8A3A-8C997B584693}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB3EA722-F83B-4644-8A3A-8C997B584693}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -45,10 +45,5 @@ namespace Chatroom_Client_Backend_Demo
 				}
 			}
 		}
-
-		private static void Client_onConnect(int obj)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }
