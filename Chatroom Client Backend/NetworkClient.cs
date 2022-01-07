@@ -19,7 +19,7 @@ namespace Chatroom_Client_Backend
 		private NetworkStream stream;
 		private string server;
 		private int port;
-
+		private bool isTimedOut = false;
 
 		///Events
 		//3
@@ -96,8 +96,13 @@ namespace Chatroom_Client_Backend
 		/// </summary>
 		public void Update()
 		{
-			if (client == null)
+			if (client is null)
 			{
+				if (isTimedOut)
+				{
+					onDisconnect?.Invoke();
+				}
+				isTimedOut = true;
 				return;
 			}
 
