@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Chatroom_Client_Backend;
 using Sharprompt;
 
@@ -10,6 +11,7 @@ namespace Chatroom_Bulk_Tester
 		public enum MainCommand
         {
 			TilføjBrugere,
+            Opdater,
             Luk
         }
 
@@ -44,13 +46,14 @@ namespace Chatroom_Bulk_Tester
                         {
                             item.Update();
                         }
-
+						continue;
+                    case MainCommand.Opdater:
                         // Refresh old ones as well.
                         foreach (var item in serverUsers)
                         {
                             item.Update();
                         }
-						continue;
+                        break;
                     case MainCommand.Luk:
                         foreach (var item in serverUsers)
                         {
