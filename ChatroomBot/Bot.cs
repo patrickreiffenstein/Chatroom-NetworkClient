@@ -30,6 +30,11 @@ namespace ChatroomBot
 
         public Member? GetMemberByID(int userID) => members[userID];
 
+        public void Send(string content)
+        {
+            networkClient.SendMessage(content);
+        }
+
         protected virtual void OnMemberRemove(Member member)
         {
         }
@@ -70,21 +75,27 @@ namespace ChatroomBot
             OnMessage(new Message(obj.message, author.Value, obj.timeStamp));
         }
 
-        public void Send(string content)
+        private void NetworkClient_onLogMessage((string message, DateTime timeStamp) obj)
         {
-            networkClient.SendMessage(content);
+            OnMessage(new Message(obj.message, Member.Server, obj.timeStamp));
         }
 
-        private void NetworkClient_onLogMessage((string message, DateTime timeStamp) obj)
+        protected virtual void OnDisconnected()
         {
         }
 
         private void NetworkClient_onDisconnect()
         {
+            OnDisconnected();
+        }
+
+        protected virtual void OnConnectionFinished(bool connected)
+        {
         }
 
         private void NetworkClient_onConnect(bool obj)
         {
+            OnConnectionFinished(obj);
         }
     }
 }

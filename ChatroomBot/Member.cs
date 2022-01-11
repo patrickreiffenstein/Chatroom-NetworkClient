@@ -24,5 +24,22 @@ namespace ChatroomBot
             this.joinedAtUTC = joinedAtUTC;
             IsSelf = isSelf;
         }
+
+        public static bool operator ==(Member member1, Member member2) => member1.ID == member2.ID;
+        public static bool operator !=(Member member1, Member member2) => member1.ID != member2.ID;
+
+        public static Member Server => new Member(0, "[Server]", DateTime.UtcNow, false);
+
+        /// <summary>
+        /// Compares members by ID and name.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+        {
+            return obj is Member member &&
+                   ID == member.ID &&
+                   Name == member.Name;
+        }
     }
 }
