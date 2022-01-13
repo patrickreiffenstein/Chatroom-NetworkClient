@@ -208,7 +208,7 @@ namespace Chatroom_Client_Backend
 		/// Metode til at sende beskeder i chatrummet
 		/// </summary>
 		/// <param name="message">Beskeden man ønsker at sende</param>
-		public void SendMessageToUserID(string message, byte id = 0)
+		public void SendMessage(string message, byte id = 0)
 		{
 			SendPacket(new SendMessagePacket(message, id));
 		}
