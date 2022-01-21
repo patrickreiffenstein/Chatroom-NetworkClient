@@ -1,36 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using Chatroom_Client_Backend;
+﻿using Chatroom_Client_Backend;
 using Sharprompt;
+using System;
+using System.Collections.Generic;
 
 namespace Chatroom_Bulk_Tester
 {
     class Program
     {
-		public enum MainCommand
+        public enum MainCommand
         {
-			TilføjBrugere,
+            TilføjBrugere,
             Opdater,
             Luk
         }
 
-		static List<ServerUserInstance> serverUsers = new List<ServerUserInstance>();
+        static List<ServerUserInstance> serverUsers = new List<ServerUserInstance>();
 
         static void Main(string[] args)
         {
-			string serverIP = Prompt.Input<string>("Indtast server IP", "127.0.0.1");
-			int serverPort = Prompt.Input<int>("Indtast server port", 25565);
-			string username = Prompt.Input<string>("Indtast brugernavn", "Anonym bot");
+            string serverIP = Prompt.Input<string>("Indtast server IP", "127.0.0.1");
+            int serverPort = Prompt.Input<int>("Indtast server port", 25565);
+            string username = Prompt.Input<string>("Indtast brugernavn", "Anonym bot");
 
             while (true)
             {
-				MainCommand mainCommand = Prompt.Select<MainCommand>("Vælg en indstilling");
+                MainCommand mainCommand = Prompt.Select<MainCommand>("Vælg en indstilling");
 
                 switch (mainCommand)
                 {
                     case MainCommand.TilføjBrugere:
-						int clientCount = Prompt.Input<int>("Hvor mange?");
+                        int clientCount = Prompt.Input<int>("Hvor mange?");
 
                         List<ServerUserInstance> newUserInstances = new List<ServerUserInstance>(clientCount);
                         for (int i = 0; i < clientCount; i++)
@@ -39,14 +38,14 @@ namespace Chatroom_Bulk_Tester
 
                             serverUsers.Add(userInstance);
                             newUserInstances.Add(userInstance);
-						}
+                        }
 
                         // Refresh newly added clients to perform handshake.
                         foreach (var item in newUserInstances)
                         {
                             item.Update();
                         }
-						continue;
+                        continue;
                     case MainCommand.Opdater:
                         // Refresh old ones as well.
                         foreach (var item in serverUsers)
@@ -64,17 +63,17 @@ namespace Chatroom_Bulk_Tester
                         break;
                 }
             }
-		}
+        }
 
-		class ServerUserInstance
+        class ServerUserInstance
         {
-			readonly NetworkClient networkClient;
+            readonly NetworkClient networkClient;
             readonly int ID;
 
-			public ServerUserInstance(string serverIP, int serverPort, string username, int ID)
+            public ServerUserInstance(string serverIP, int serverPort, string username, int ID)
             {
                 this.ID = ID;
-				networkClient = new NetworkClient(username, serverIP, serverPort);
+                networkClient = new NetworkClient(username, serverIP, serverPort);
                 networkClient.onConnect += NetworkClient_onConnect;
                 networkClient.onDisconnect += NetworkClient_onDisconnect;
                 networkClient.Connect();
