@@ -74,8 +74,8 @@ namespace Chatroom_Bulk_Tester
             {
                 this.ID = ID;
                 networkClient = new NetworkClient(username, serverIP, serverPort);
-                networkClient.onConnect += NetworkClient_onConnect;
-                networkClient.onDisconnect += NetworkClient_onDisconnect;
+                networkClient.OnConnect += NetworkClient_onConnect;
+                networkClient.OnDisconnect += NetworkClient_onDisconnect;
                 networkClient.Connect();
             }
 

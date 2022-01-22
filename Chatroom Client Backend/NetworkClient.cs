@@ -5,11 +5,14 @@ using Chatroom_Client_Backend.ClientPackets;
 
 namespace Chatroom_Client_Backend
 {
+    /// <summary>
+    /// Klassen til netværks klienten.
+    /// Dette er det backend man bruger i selve klienten for at tilgå servere.
+    /// </summary>
     public class NetworkClient
     {
-        //Variabler
-        public int ClientID;
-
+        // Variabler
+        private int clientID;
         private TcpClient client;
         private string nickName;
         private NetworkStream stream;
@@ -17,48 +20,110 @@ namespace Chatroom_Client_Backend
         private int port;
         private bool isTimedOut = false;
 
-        ///Events
-        //3
-        public event Action<(int user, string message, DateTime timeStamp)> onMessage;
-        //5
-        public event Action<(string message, DateTime timeStamp)> onLogMessage;
-        //7
-        public event Action<(int userID, string name)> onUserInfoReceived;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NetworkClient"/> class.
+        /// NetworkClient er instansen som man laver når man vil starte sit backend modul,
+        /// det er den som man bruger til at have en samtale kørende med serveren.
+        /// </summary>
+        /// <param name="nickname">Ens eget navn.</param>
+        /// <param name="server">IP til den server man vil tilkoble sig.</param>
+        /// <param name="port">Porten til den server man vil tilkoble sig.</param>
+        public NetworkClient(string nickname, string server, int port)
+        {
+            nickName = nickname;
+            this.server = server;
+            this.port = port;
+        }
+
+        /// <summary>
+        /// Pakke nummer 3
+        /// </summary>
+        public event Action<(int user, string message, DateTime timeStamp)> OnMessage;
+
+        /// <summary>
+        /// Pakke nummer 5
+        /// </summary>
+        public event Action<(string message, DateTime timeStamp)> OnLogMessage;
+
+        /// <summary>
+        /// Pakke nummer 7
+        /// </summary>
+        public event Action<(int userID, string name)> OnUserInfoReceived;
 
         /// <summary>
         /// Returnere en boolks værdi alt efter om den er lykkedes (true) eller fejlet (false), i at tilkoble sig til serveren
         /// </summary>
-        public event Action<bool> onConnect;
-        //11
-        public event Action<int> onUserLeft;
-
-        public event Action onDisconnect;
-
+        public event Action<bool> OnConnect;
 
         /// <summary>
-        /// NetworkClient er instansen som man laver når man vil starte sit backend modul, 
-        /// det er den som man bruger til at have en samtale kørende med serveren.
+        /// Pakke nummer 11
         /// </summary>
-        /// <param name="Nickname">Ens eget navn</param>
-        /// <param name="server">IP til den server man vil tilkoble sig</param>
-        /// <param name="port">Porten til den server man vil tilkoble sig</param>
-        public NetworkClient(string Nickname, string Server, int Port)
+        public event Action<int> OnUserLeft;
+
+        /// <summary>
+        /// Pakke nummer 10
+        /// </summary>
+        public event Action OnDisconnect;
+
+        /// <summary>
+        /// En enum som holder på alle ID'er af de forskellige packets.
+        /// </summary>
+        public enum Packets
         {
-            nickName = Nickname;
-            server = Server;
-            port = Port;
+            /// <summary>
+            /// Ping packet ID
+            /// </summary>
+            Ping = 1,
+
+            /// <summary>
+            /// Send message packet ID
+            /// </summary>
+            SendMessage = 2,
+
+            /// <summary>
+            /// Receive message packet ID
+            /// </summary>
+            ReceiveMessage = 3,
+
+            /// <summary>
+            /// Tell name packet ID
+            /// </summary>
+            TellName = 4,
+
+            /// <summary>
+            /// Log message packet ID
+            /// </summary>
+            LogMessage = 5,
+
+            /// <summary>
+            /// Send user info packet ID
+            /// </summary>
+            SendUserInfo = 7,
+
+            /// <summary>
+            /// Send user ID packet ID
+            /// </summary>
+            SendUserID = 9,
+
+            /// <summary>
+            /// Disconnect packet ID
+            /// </summary>
+            Disconnect = 10,
+
+            /// <summary>
+            /// User left packet ID
+            /// </summary>
+            UserLeft = 11,
         }
 
         /// <summary>
-        /// Connect bliver brugt til at man vælger hvilken server man vil connect sin
+        /// Connect bliver brugt til at man vælger hvilken server man vil connect sin.
         /// </summary>
-        /// <param name="server"></param>
-        /// <param name="port"></param>
         public void Connect()
         {
             client = new TcpClient();
 
-            client.BeginConnect(server, port, new AsyncCallback(delegate (IAsyncResult ar)
+            client.BeginConnect(server, port, new AsyncCallback(delegate(IAsyncResult ar)
             {
                 try
                 {
@@ -68,27 +133,13 @@ namespace Chatroom_Client_Backend
                 }
                 catch (SocketException)
                 {
-                    onConnect(false);
+                    OnConnect(false);
                 }
-
             }), null);
         }
 
-        public enum Packets
-        {
-            Ping = 1,
-            SendMessage = 2,
-            ReceiveMessage = 3,
-            TellName = 4,
-            LogMessage = 5,
-            SendUserInfo = 7,
-            SendUserID = 9,
-            Disconnect = 10,
-            UserLeft = 11
-        }
-
         /// <summary>
-        /// Update er en metode som skal køres hver frame eller hvor ofte man ønsker at få opdateret information fra serveren
+        /// Update er en metode som skal køres hver frame eller hvor ofte man ønsker at få opdateret information fra serveren.
         /// </summary>
         public void Update()
         {
@@ -96,8 +147,9 @@ namespace Chatroom_Client_Backend
             {
                 if (isTimedOut)
                 {
-                    onDisconnect?.Invoke();
+                    OnDisconnect?.Invoke();
                 }
+
                 isTimedOut = true;
                 return;
             }
@@ -124,7 +176,7 @@ namespace Chatroom_Client_Backend
                 switch (stream.ReadByte())
                 {
                     case (byte)Packets.Ping:
-                        //Klienten bliver pinget og vi ignorer det
+                        // Klienten bliver pinget og vi ignorer det
                         break;
                     case (byte)Packets.ReceiveMessage:
                         privateMessage = stream.ReadByte() != 0;
@@ -145,7 +197,7 @@ namespace Chatroom_Client_Backend
                         stream.Read(messageArray, 0, messageLength);
                         message = Encoding.UTF8.GetString(messageArray);
 
-                        onMessage?.Invoke((userID, message, unixTimeStamp));
+                        OnMessage?.Invoke((userID, message, unixTimeStamp));
                         break;
                     case (byte)Packets.LogMessage:
                         unixTimeStampArray = new byte[sizeof(long)];
@@ -162,7 +214,7 @@ namespace Chatroom_Client_Backend
                         stream.Read(messageArray, 0, messageLength);
                         message = Encoding.UTF8.GetString(messageArray);
 
-                        onLogMessage?.Invoke((message, unixTimeStamp));
+                        OnLogMessage?.Invoke((message, unixTimeStamp));
                         break;
                     case (byte)Packets.SendUserInfo:
                         userID = stream.ReadByte();
@@ -173,26 +225,26 @@ namespace Chatroom_Client_Backend
                         stream.Read(nameArray, 0, nameLength);
                         name = Encoding.UTF8.GetString(nameArray);
 
-                        onUserInfoReceived?.Invoke((userID, name));
+                        OnUserInfoReceived?.Invoke((userID, name));
                         break;
                     case (byte)Packets.SendUserID:
-                        //Handshake
-                        ClientID = stream.ReadByte();
+                        // Handshake
+                        clientID = stream.ReadByte();
 
                         SendPacket(new TellNamePacket(nickName));
-                        onConnect?.Invoke(true);
+                        OnConnect?.Invoke(true);
                         break;
                     case (byte)Packets.UserLeft:
                         userID = stream.ReadByte();
 
-                        //Hvis det nu skulle ske
-                        if (userID == ClientID)
+                        // Hvis det nu skulle ske
+                        if (userID == clientID)
                         {
-                            onDisconnect?.Invoke();
+                            OnDisconnect?.Invoke();
                             break;
                         }
 
-                        onUserLeft?.Invoke(userID);
+                        OnUserLeft?.Invoke(userID);
                         break;
                     default:
                         break;
@@ -201,31 +253,35 @@ namespace Chatroom_Client_Backend
         }
 
         /// <summary>
-        /// Metode til at sende beskeder i chatrummet
+        /// Metode til at sende beskeder i chatrummet.
         /// </summary>
-        /// <param name="message">Beskeden man ønsker at sende</param>
+        /// <param name="message">Beskeden man ønsker at sende.</param>
+        /// <param name="id">ID på person(er) man vil sende beskeden til.</param>
         public void SendMessage(string message, byte id = 0)
         {
             SendPacket(new SendMessagePacket(message, id));
         }
 
         /// <summary>
-        /// Metoden til at skifte sit navn
+        /// Metoden til at skifte sit navn.
         /// </summary>
-        /// <param name="nickName">Det navn man ønsker at skifte til</param>
+        /// <param name="nickName">Det navn man ønsker at skifte til.</param>
         public void ChangeName(string nickName)
         {
             SendPacket(new TellNamePacket(nickName));
         }
 
         /// <summary>
-        /// Metoden til at frakoble sig serveren
+        /// Metoden til at frakoble sig serveren.
         /// </summary>
         public void Disconnect()
         {
             SendPacket(new DisconnectPacket());
         }
 
+        /// <summary>
+        /// Metoden til at sende et ping til serveren.
+        /// </summary>
         public void PingServer()
         {
             SendPacket(new PingServerPacket());
@@ -240,7 +296,7 @@ namespace Chatroom_Client_Backend
             }
             catch (Exception)
             {
-                onDisconnect?.Invoke();
+                OnDisconnect?.Invoke();
             }
         }
     }

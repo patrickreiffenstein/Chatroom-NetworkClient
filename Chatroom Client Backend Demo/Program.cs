@@ -3,8 +3,15 @@ using Chatroom_Client_Backend;
 
 namespace Chatroom_Client_Backend_Demo
 {
+    /// <summary>
+    /// Program-klassen til demoen.
+    /// </summary>
     internal class Program
     {
+        /// <summary>
+        /// Main metoden som starter med at blive kørt.
+        /// </summary>
+        /// <param name="args">Parametre som programmet bruger.</param>
         internal static void Main(string[] args)
         {
             bool running = true;
@@ -25,15 +32,12 @@ namespace Chatroom_Client_Backend_Demo
                 {
                     case "msg":
                         client.SendMessage(input);
-                        // client.SendPacket(new SendMessagePacket("Hej kresten!"));
                         break;
                     case "disconnect":
                         client.Disconnect();
-                        // client.SendPacket(new TellNamePacket(nickName));
                         break;
                     case "name":
                         client.ChangeName(input);
-                        // client.SendPacket(new DisconnectPacket());
                         break;
                     default:
                         break;

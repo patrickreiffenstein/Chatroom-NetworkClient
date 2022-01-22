@@ -23,12 +23,12 @@ namespace ChatroomBot
         {
             networkClient = new NetworkClient(nickname + " [bot]", hostname, port);
 
-            networkClient.onConnect += NetworkClient_onConnect;
-            networkClient.onDisconnect += NetworkClient_onDisconnect;
-            networkClient.onLogMessage += NetworkClient_onLogMessage;
-            networkClient.onMessage += NetworkClient_onMessage;
-            networkClient.onUserInfoReceived += NetworkClient_onUserInfoReceived;
-            networkClient.onUserLeft += NetworkClient_onUserLeft;
+            networkClient.OnConnect += NetworkClient_onConnect;
+            networkClient.OnDisconnect += NetworkClient_onDisconnect;
+            networkClient.OnLogMessage += NetworkClient_onLogMessage;
+            networkClient.OnMessage += NetworkClient_onMessage;
+            networkClient.OnUserInfoReceived += NetworkClient_onUserInfoReceived;
+            networkClient.OnUserLeft += NetworkClient_onUserLeft;
 
             networkClient.Connect();
         }
