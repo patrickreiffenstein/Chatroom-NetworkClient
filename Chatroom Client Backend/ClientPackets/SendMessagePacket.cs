@@ -4,32 +4,40 @@ using static Chatroom_Client_Backend.NetworkClient;
 
 namespace Chatroom_Client_Backend.ClientPackets
 {
+    /// <summary>
+    /// Pakken som bruges til at sende beskeder.
+    /// </summary>
     public class SendMessagePacket : ClientPacket
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SendMessagePacket"/> class.
+        /// </summary>
+        /// <param name="message"> Beskeden der skal sendes. </param>
+        /// <param name="id"> ID på den som skal modtage beskeden. </param>
         public SendMessagePacket(string message, byte id)
         {
-            bytes = new byte[sizeof(byte) + sizeof(byte) + sizeof(ushort) + Encoding.UTF8.GetByteCount(message)];
+            Bytes = new byte[sizeof(byte) + sizeof(byte) + sizeof(ushort) + Encoding.UTF8.GetByteCount(message)];
 
-            //PackageID
-            bytes[0] = (byte)Packets.SendMessage;
+            // PackageID
+            Bytes[0] = (byte)Packets.SendMessage;
 
-            //UserID
-            bytes[1] = (byte)id;
+            // UserID
+            Bytes[1] = (byte)id;
 
-            //MessageLength
+            // MessageLength
             byte[] messageLengthBytes = BitConverter.GetBytes((ushort)Encoding.UTF8.GetByteCount(message));
 
             for (int i = 0; i < messageLengthBytes.Length; i++)
             {
-                bytes[2 + i] = messageLengthBytes[i];
+                Bytes[2 + i] = messageLengthBytes[i];
             }
 
-            //Message
+            // Message
             byte[] messageBytes = Encoding.UTF8.GetBytes(message);
 
             for (int i = 0; i < messageBytes.Length; i++)
             {
-                bytes[4 + i] = messageBytes[i];
+                Bytes[4 + i] = messageBytes[i];
             }
         }
     }

@@ -3,24 +3,31 @@ using static Chatroom_Client_Backend.NetworkClient;
 
 namespace Chatroom_Client_Backend.ClientPackets
 {
+    /// <summary>
+    /// Pakken til at fortælle hvad ens navn er til serveren.
+    /// </summary>
     public class TellNamePacket : ClientPacket
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TellNamePacket"/> class.
+        /// </summary>
+        /// <param name="nickName"> Ens nye navn. </param>
         public TellNamePacket(string nickName)
         {
-            bytes = new byte[sizeof(byte) + sizeof(byte) + Encoding.UTF8.GetByteCount(nickName)];
+            Bytes = new byte[sizeof(byte) + sizeof(byte) + Encoding.UTF8.GetByteCount(nickName)];
 
-            //PackageID
-            bytes[0] = (byte)Packets.TellName;
+            // PackageID
+            Bytes[0] = (byte)Packets.TellName;
 
-            //MessageLength
-            bytes[1] = (byte)Encoding.UTF8.GetByteCount(nickName);
+            // MessageLength
+            Bytes[1] = (byte)Encoding.UTF8.GetByteCount(nickName);
 
-            //Message
+            // Message
             byte[] nickNameBytes = Encoding.UTF8.GetBytes(nickName);
 
             for (int i = 0; i < nickNameBytes.Length; i++)
             {
-                bytes[2 + i] = nickNameBytes[i];
+                Bytes[2 + i] = nickNameBytes[i];
             }
         }
     }

@@ -12,7 +12,6 @@ namespace Chatroom_Client_Backend
     public class NetworkClient
     {
         // Variabler
-        private int clientID;
         private TcpClient client;
         private string nickName;
         private NetworkStream stream;
@@ -115,6 +114,11 @@ namespace Chatroom_Client_Backend
             /// </summary>
             UserLeft = 11,
         }
+
+        /// <summary>
+        /// Skaffer ID'et for denne klient.
+        /// </summary>
+        public int ClientID { get; private set; }
 
         /// <summary>
         /// Connect bliver brugt til at man vælger hvilken server man vil connect sin.
@@ -229,7 +233,7 @@ namespace Chatroom_Client_Backend
                         break;
                     case (byte)Packets.SendUserID:
                         // Handshake
-                        clientID = stream.ReadByte();
+                        ClientID = stream.ReadByte();
 
                         SendPacket(new TellNamePacket(nickName));
                         OnConnect?.Invoke(true);
@@ -238,7 +242,7 @@ namespace Chatroom_Client_Backend
                         userID = stream.ReadByte();
 
                         // Hvis det nu skulle ske
-                        if (userID == clientID)
+                        if (userID == ClientID)
                         {
                             OnDisconnect?.Invoke();
                             break;
@@ -292,7 +296,7 @@ namespace Chatroom_Client_Backend
             try
             {
                 NetworkStream stream = client.GetStream();
-                stream.Write(packet.bytes, 0, packet.bytes.Length);
+                stream.Write(packet.Bytes, 0, packet.Bytes.Length);
             }
             catch (Exception)
             {
