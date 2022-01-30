@@ -107,6 +107,8 @@ namespace ChatroomBot
 
             if (newlyJoined)
             {
+                // Nullable reference analyzer is not able to track collections.
+                // - This is safe.
                 OnMemberJoin(members[obj.userID].Value);
             }
         }
