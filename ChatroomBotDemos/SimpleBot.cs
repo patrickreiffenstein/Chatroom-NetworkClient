@@ -1,6 +1,6 @@
 ﻿using ChatroomBot;
 
-namespace ChatroomBotDemos
+namespace ChatroomBot.Demos
 {
     /// <summary>
     /// Sample implementation of a simple bot.

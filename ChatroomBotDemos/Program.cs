@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using ChatroomBot;
 
-namespace ChatroomBotDemos
+namespace ChatroomBot.Demos
 {
     internal class Program
     {
