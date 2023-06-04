@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31129.286
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chatroom Client Backend", "Chatroom Client Backend\Chatroom Client Backend.csproj", "{77CC37E5-9074-444F-BE62-9480E7152D5E}"
 EndProject
@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chatroom Bulk Tester", "Cha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatroomBot", "ChatroomBot\ChatroomBot.csproj", "{4942B2A0-2B50-4A60-AF3B-26368035BB6B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatroomBotDemos", "ChatroomBotDemos\ChatroomBotDemos.csproj", "{9FC7F291-DF8F-452A-B078-7BE31A1D992C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatroomBot.Demos", "ChatroomBotDemos\ChatroomBot.Demos.csproj", "{9FC7F291-DF8F-452A-B078-7BE31A1D992C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{39692ADC-AAE4-4A39-A8E1-8B3AD19F6612}"
 	ProjectSection(SolutionItems) = preProject
